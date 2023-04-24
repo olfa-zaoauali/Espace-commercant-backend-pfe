@@ -1,9 +1,11 @@
 package com.PFE.Espacecommercant.Authen.Controller;
 
 
+import com.PFE.Espacecommercant.Authen.DTO.ClientResponseDto;
 import com.PFE.Espacecommercant.Authen.DTO.SAdminRequestdto;
 import com.PFE.Espacecommercant.Authen.DTO.SAdminResponsedto;
 import com.PFE.Espacecommercant.Authen.Service.facade.SAdminservice;
+import com.PFE.Espacecommercant.Authen.users.Client;
 import com.PFE.Espacecommercant.Authen.users.Commercant;
 import com.PFE.Espacecommercant.Authen.users.SAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,28 @@ public class SAdminController {
     @Autowired
     private SAdminservice sAdminservice;
     @GetMapping("")
-    public ResponseEntity<List<SAdminResponsedto>> getSAdmins(){
+    public List<SAdminResponsedto> getSAdmins(){
 
-        return new ResponseEntity<>(sAdminservice.findAll(), HttpStatus.OK);
+        return sAdminservice.findall();
     }
+    @GetMapping("/admin")
+    public List<SAdmin> getSAdmins1(){
+
+        return sAdminservice.findAll();
+    }
+    @GetMapping("/commercants/{tenantId}")
+    public List<Commercant> getallcommercants(@PathVariable String tenantId){
+        return sAdminservice.SearchAllCommercant(tenantId);
+    }
+    @GetMapping("/clients/{tenantId}")
+    public List<ClientResponseDto> getallclients(@PathVariable String tenantId){
+        return sAdminservice.SearchAllClients(tenantId);
+    }
+    @GetMapping("/get/{tenantId}")
+    public List<ClientResponseDto> Clients(@PathVariable String tenantId){
+        return sAdminservice.getAllClients(tenantId);
+    }
+
 
     @GetMapping("/{email}")
     public ResponseEntity<Optional<SAdmin>> findByEmail(@PathVariable String email) {
@@ -53,4 +73,5 @@ public class SAdminController {
         return ResponseEntity.accepted().body(sAdminResponsedto);
 
     }
+
 }

@@ -7,7 +7,7 @@ public class CommercanttoUser {
         user.setPassword(commercant.getPassword());
         user.setEnabled(commercant.getEnabled());
         user.setImage(commercant.getImage());
-        user.setTenant_id(commercant.getId());
+        user.setTenantId(commercant.getTenantId());
         user.setRole(Role.COMMERCANT);
         return (user);
     }

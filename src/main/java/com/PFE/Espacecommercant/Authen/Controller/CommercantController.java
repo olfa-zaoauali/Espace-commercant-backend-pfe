@@ -1,9 +1,11 @@
 package com.PFE.Espacecommercant.Authen.Controller;
 
 import com.PFE.Espacecommercant.Authen.DTO.AuthenticationResponse;
+import com.PFE.Espacecommercant.Authen.DTO.CommercantReqdto;
 import com.PFE.Espacecommercant.Authen.DTO.CommercantRequestdto;
 import com.PFE.Espacecommercant.Authen.DTO.CommercantResponsedto;
 import com.PFE.Espacecommercant.Authen.Service.facade.CommercantService;
+import com.PFE.Espacecommercant.Authen.users.Client;
 import com.PFE.Espacecommercant.Authen.users.Commercant;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +44,10 @@ public class CommercantController {
         commercantService.activateCommercant(id);
         return "User activated successfully";
     }
+    @GetMapping("/clients/{tenantId}")
+    public List<Client> getallclients(@PathVariable String tenantId){
+        return commercantService.SearchAllclient(tenantId);
+    }
     @GetMapping("/{email}")
     public ResponseEntity<Optional<Commercant>> findByEmail(@PathVariable String email) {
         Optional<Commercant> Response=commercantService.findByemail(email);
@@ -74,7 +80,7 @@ public class CommercantController {
         return ResponseEntity.accepted().body(commercantResponsedto);
     }
     @PutMapping (value="/updatecomercant/{id}",consumes = "multipart/form-data")
-    public ResponseEntity<CommercantResponsedto> updatecommercant(@RequestPart String request, @RequestPart("image") MultipartFile image,@PathVariable Integer id) throws MessagingException, IOException {
+    public ResponseEntity<CommercantResponsedto> update(@RequestPart String request, @RequestPart("image") MultipartFile image,@PathVariable Integer id) throws MessagingException, IOException {
         boolean isExit = new File(context.getRealPath("/images/")).exists();
         if (!isExit)
         {
@@ -94,6 +100,29 @@ public class CommercantController {
         CommercantRequestdto commercant = objectMapper.readValue(request, CommercantRequestdto.class);
         commercant.setImage(filenameimage);
         CommercantResponsedto commercantResponsedto=commercantService.update(commercant, id);
+        return ResponseEntity.accepted().body(commercantResponsedto);
+    }
+    @PutMapping (value="/updatecomercantsadmin/{id}",consumes = "multipart/form-data")
+    public ResponseEntity<CommercantResponsedto> updatecommercant(@RequestPart String request, @RequestPart("image") MultipartFile image,@PathVariable Integer id) throws MessagingException, IOException {
+        boolean isExit = new File(context.getRealPath("/images/")).exists();
+        if (!isExit)
+        {
+            new File (context.getRealPath("/images/")).mkdir();
+            System.out.println("mk dir.............");
+        }
+        String filenameimage = image.getOriginalFilename();
+        String newFileName = FilenameUtils.getBaseName(filenameimage)+"."+FilenameUtils.getExtension(filenameimage);
+        File serverFile = new File (context.getRealPath("/images/"+File.separator+newFileName));
+        try
+        {
+            System.out.println("image");
+            FileUtils.writeByteArrayToFile(serverFile,image.getBytes());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        CommercantReqdto commercant = objectMapper.readValue(request, CommercantReqdto.class);
+        commercant.setImage(filenameimage);
+        CommercantResponsedto commercantResponsedto=commercantService.updatecommercant(commercant, id);
         return ResponseEntity.accepted().body(commercantResponsedto);
     }
 

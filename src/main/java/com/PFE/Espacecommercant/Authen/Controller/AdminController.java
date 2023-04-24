@@ -2,7 +2,9 @@ package com.PFE.Espacecommercant.Authen.Controller;
 import com.PFE.Espacecommercant.Authen.DTO.RegisterAdminResponsedto;
 import com.PFE.Espacecommercant.Authen.DTO.RegisterRequest;
 import com.PFE.Espacecommercant.Authen.Service.facade.Adminservice;
+import com.PFE.Espacecommercant.Authen.model.Modules;
 import com.PFE.Espacecommercant.Authen.users.Admin;
+import com.PFE.Espacecommercant.Authen.users.Client;
 import com.PFE.Espacecommercant.Authen.users.Commercant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,9 +30,17 @@ public class AdminController {
 
         return adminservice.findAll();
     }
-    @GetMapping("/commercants/{id}")
-    public List<Commercant> getallcommercants(@PathVariable Integer id){
-       return adminservice.SearchAllCommercant(id);
+    @GetMapping("/commercants/{tenantId}")
+    public List<Commercant> getallcommercants(@PathVariable String tenantId){
+       return adminservice.SearchAllCommercant(tenantId);
+    }
+    @GetMapping("/modules/{tenantId}")
+    public List<Modules> getallmodules(@PathVariable String tenantId){
+        return adminservice.SearchAllModules(tenantId);
+    }
+    @GetMapping("/clients/{tenantId}")
+    public List<Client> getallclients(@PathVariable String tenantId){
+        return adminservice.getallclients(tenantId);
     }
     @GetMapping("/validation/{id}")
     public String activateAdmin(@PathVariable("id") Integer id) {

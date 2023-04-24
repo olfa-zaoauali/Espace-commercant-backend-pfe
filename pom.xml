@@ -84,7 +84,18 @@
             <version>2.4</version>
         </dependency>
 
-    </dependencies>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.12.4</version>
+		</dependency>
+		<dependency>
+			<groupId>dev.drewhamilton.androidtime</groupId>
+			<artifactId>datetimeformatters</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+
+	</dependencies>
 
 	<build>
 		<plugins>

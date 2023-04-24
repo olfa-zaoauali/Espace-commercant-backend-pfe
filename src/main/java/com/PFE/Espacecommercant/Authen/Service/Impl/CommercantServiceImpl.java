@@ -1,21 +1,22 @@
 package com.PFE.Espacecommercant.Authen.Service.Impl;
 
+import com.PFE.Espacecommercant.Authen.DTO.CommercantReqdto;
 import com.PFE.Espacecommercant.Authen.DTO.CommercantRequestdto;
 import com.PFE.Espacecommercant.Authen.DTO.CommercantResponsedto;
 import com.PFE.Espacecommercant.Authen.Exceptions.NotFoundException;
 import com.PFE.Espacecommercant.Authen.Repository.AdminRepository;
 import com.PFE.Espacecommercant.Authen.Repository.CommercantRepository;
+import com.PFE.Espacecommercant.Authen.Repository.SAdminRepository;
 import com.PFE.Espacecommercant.Authen.Repository.UserRepository;
 import com.PFE.Espacecommercant.Authen.Service.facade.CommercantService;
 import com.PFE.Espacecommercant.Authen.Service.facade.MailService;
 import com.PFE.Espacecommercant.Authen.model.PasswordGenerate;
-import com.PFE.Espacecommercant.Authen.users.Admin;
-import com.PFE.Espacecommercant.Authen.users.Commercant;
+import com.PFE.Espacecommercant.Authen.users.*;
 import com.PFE.Espacecommercant.Authen.model.Mail;
-import com.PFE.Espacecommercant.Authen.users.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,8 @@ public class CommercantServiceImpl implements CommercantService {
     private final UserRepository userRepository;
     @Autowired
     private final AdminRepository adminRepository;
+    @Autowired
+    private final SAdminRepository sAdminRepository;
     @Autowired private final ModelMapper modelMapper ;
     @Autowired
     private MailService mailService;
@@ -91,7 +94,8 @@ public class CommercantServiceImpl implements CommercantService {
         String email=commercant.getEmail();
         User user= userRepository.findByEmail(email);
         Commercant commercantentity = modelMapper.map(commercantRequestdto,Commercant.class);
-        Optional<Admin> admin= adminRepository.findById(commercantRequestdto.getAdmin());
+        commercantentity.setTenantId(commercant.getTenantId());
+        Optional<Admin> admin= adminRepository.findByTenantId(commercantRequestdto.getAdmin());
         commercantentity.setAdmin(admin.get());
         commercantentity.setId(id);
         commercantentity.setPassword(PasswordGenerate.generatepassword());
@@ -104,6 +108,28 @@ public class CommercantServiceImpl implements CommercantService {
         userRepository.save(user);
         return CommercantResponsedto.mapperfromEntityToDto(updated) ;
     }
+
+    @Override
+    public CommercantResponsedto updatecommercant(CommercantReqdto commercantReqtdto, Integer id) {
+        Commercant commercant = commercantRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User id not found "+ id));
+        String email=commercant.getEmail();
+        User user= userRepository.findByEmail(email);
+        Commercant commercantentity= Commercant.mapperdtotocom( commercantReqtdto);
+        commercantentity.setTenantId(commercant.getTenantId());
+        Optional<SAdmin> sadmin= sAdminRepository.findByTenantId(commercantReqtdto.getSadminId());
+        commercantentity.setSadmin(sadmin.get());
+        commercantentity.setId(id);
+        commercantentity.setPassword(commercant.getPassword());
+        user.setEmail(email);
+        Commercant updated=commercantRepository.save(commercantentity);
+        user.setEmail(commercantentity.getEmail());
+        user.setImage(commercantentity.getImage());
+        user.setPassword(passwordEncoder.encode(commercantentity.getPassword()));
+        user.setEnabled(commercantentity.getEnabled());
+        userRepository.save(user);
+        return CommercantResponsedto.mapperfromcomToDto(updated) ;    }
+
     @Override
     public Commercant updateenabled(Integer id) {
         Mail mail = new Mail();
@@ -138,5 +164,14 @@ public class CommercantServiceImpl implements CommercantService {
         user.setEnabled(commercant.getEnabled());
         userRepository.save(user);
         return commercant;
+    }
+
+    @Override
+    public List<Client> SearchAllclient(String tenantId) {
+        Commercant commercant = commercantRepository.findByTenantId(tenantId).orElse(null);
+        if (commercant == null) {
+            return (List<Client>) ResponseEntity.notFound().build();
+        }
+        return commercant.getClients();
     }
 }

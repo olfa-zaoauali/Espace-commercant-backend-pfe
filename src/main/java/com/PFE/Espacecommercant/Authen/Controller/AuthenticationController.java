@@ -123,6 +123,33 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(service.registerCommercant(commercant));
     }
+    @PostMapping(value="/registercommercantadmin",consumes = "multipart/form-data")
+    public ResponseEntity<AuthenticationResponse> registercommercantadmin(@RequestPart String request,@RequestPart("image") MultipartFile image) throws MessagingException,IOException {
+        boolean isExit = new File(context.getRealPath("/images/")).exists();
+        if (!isExit)
+        {
+            new File (context.getRealPath("/images/")).mkdir();
+            System.out.println("mk dir.............");
+        }
+        String filenameimage = image.getOriginalFilename();
+        String newFileName = FilenameUtils.getBaseName(filenameimage)+"."+FilenameUtils.getExtension(filenameimage);
+        File serverFile = new File (context.getRealPath("/images/"+File.separator+newFileName));
+
+        try
+        {
+            System.out.println("image");
+            FileUtils.writeByteArrayToFile(serverFile,image.getBytes());
+
+
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        CommercantReqdto commercant = objectMapper.readValue(request, CommercantReqdto.class);
+        commercant.setImage(filenameimage);
+
+        return ResponseEntity.ok(service.registerCommercantadmin(commercant));
+    }
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request

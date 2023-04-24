@@ -19,14 +19,14 @@ public class CommercantResponsedto {
     private String image;
     private Double pay;
     private boolean enabled;
-    private Integer admin;
-    private Integer sadminid;
+    private String admin;
+    private String sadminId;
 
 
     public static CommercantResponsedto mapperfromEntityToDto(Commercant commercant){
         CommercantResponsedto dto = new CommercantResponsedto();
         dto.setId(commercant.getId());
-        dto.setAdmin(commercant.getAdmin().getId());
+        dto.setAdmin(commercant.getAdmin().getTenantId());
         dto.setAdresse(commercant.getAdresse());
         dto.setFirstname(commercant.getFirstname());
         dto.setLastname(commercant.getLastname());
@@ -39,5 +39,22 @@ public class CommercantResponsedto {
     return dto;
 
     }
+    public static CommercantResponsedto mapperfromcomToDto(Commercant commercant){
+        CommercantResponsedto dto = new CommercantResponsedto();
+        dto.setId(commercant.getId());
+        dto.setSadminId(commercant.getSadmin().getTenantId());
+        dto.setAdresse(commercant.getAdresse());
+        dto.setFirstname(commercant.getFirstname());
+        dto.setLastname(commercant.getLastname());
+        dto.setEmail(commercant.getEmail());
+        dto.setVille(commercant.getVille());
+        dto.setEnabled(commercant.getEnabled());
+        dto.setTelephone(commercant.getTelephone());
+        dto.setImage(commercant.getImage());
+        dto.setPay(commercant.getPay());
+        return dto;
+
+    }
+
 
 }

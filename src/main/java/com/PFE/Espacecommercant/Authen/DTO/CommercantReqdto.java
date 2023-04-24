@@ -1,5 +1,6 @@
 package com.PFE.Espacecommercant.Authen.DTO;
 
+import com.PFE.Espacecommercant.Authen.users.Commercant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommercantRequestdto {
+public class CommercantReqdto {
     private String firstname;
     private String lastname;
     private String email;
@@ -16,5 +17,6 @@ public class CommercantRequestdto {
     private String ville;
     private String image;
     private Double pay;
-    private String admin;
+    private String sadminId;
+
 }

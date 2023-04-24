@@ -15,5 +15,5 @@ public class AuthenticationResponse {
     private Boolean enabled;
     private String image;
     private Role role;
-    private Integer tenantid;
+    private String tenantId;
 }

@@ -6,21 +6,19 @@ import com.PFE.Espacecommercant.Authen.Repository.AdminRepository;
 import com.PFE.Espacecommercant.Authen.Repository.UserRepository;
 import com.PFE.Espacecommercant.Authen.Service.facade.Adminservice;
 import com.PFE.Espacecommercant.Authen.Service.facade.MailService;
-import com.PFE.Espacecommercant.Authen.users.Admin;
+import com.PFE.Espacecommercant.Authen.model.Modules;
+import com.PFE.Espacecommercant.Authen.users.*;
 import com.PFE.Espacecommercant.Authen.model.Mail;
-import com.PFE.Espacecommercant.Authen.users.Commercant;
-import com.PFE.Espacecommercant.Authen.users.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class Adminserviceimpl implements Adminservice {
@@ -30,7 +28,6 @@ public class Adminserviceimpl implements Adminservice {
     @Autowired private final ModelMapper modelMapper ;
     @Autowired
     private MailService mailService;
-    private final Path root = Paths.get("uploads");
     @Override
     public List<Admin> findAll() {
         return adminRepository.findAll();
@@ -40,14 +37,16 @@ public class Adminserviceimpl implements Adminservice {
     public void activateAdmin(Integer id)
     {
         Mail mail = new Mail();
-
         Admin user = adminRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User id not found "+ id));
-
         user.setEnabled(true);
         String email=user.getEmail();
         User admin= userRepository.findByEmail(email);
         admin.setEnabled(true);
+        Role role= Role.ADMIN;
+        if (admin.getRole().equals("CLIENT")){
+            admin.setRole(role);
+        }
         userRepository.save(admin);
         adminRepository.save(user);
         mail.setMailFrom("zaoualiolfa2000@gmail.com");
@@ -71,6 +70,7 @@ public class Adminserviceimpl implements Adminservice {
         String email=admin.getEmail();
         User user= userRepository.findByEmail(email);
         Admin adminEntity = modelMapper.map(adminRequestDto,Admin.class);
+        adminEntity.setTenantId(admin.getTenantId());
         adminEntity.setEnabled(adminRequestDto.getEnabled());
         user.setEnabled(adminRequestDto.getEnabled());
         adminEntity.setId(id);
@@ -116,13 +116,34 @@ public class Adminserviceimpl implements Adminservice {
     }
 
     @Override
-    public List<Commercant> SearchAllCommercant(Integer id) {
-        Admin admin = adminRepository.findById(id).orElse(null);
+    public List<Commercant> SearchAllCommercant(String tenantId) {
+        Admin admin = adminRepository.findByTenantId(tenantId).orElse(null);
         if (admin == null) {
             return (List<Commercant>) ResponseEntity.notFound().build();
         }
         return admin.getCommercants();
     }
 
+    @Override
+    public List<Modules> SearchAllModules(String tenantId) {
+        Admin admin=adminRepository.findByTenantId(tenantId).orElse(null);
+        if (admin == null) {
+            return (List<Modules>) ResponseEntity.notFound().build();
+        }
+        return admin.getModules();
+    }
+    @Override
+    public List<Client> getallclients(String tenantId){
+        Admin admin=adminRepository.findByTenantId(tenantId).orElse(null);
+        if (admin == null) {
+            return (List<Client>) ResponseEntity.notFound().build();
+        }
+        List<Commercant> commercants= admin.getCommercants();
+        List<Client> clientList=new ArrayList<>();
+        for (Commercant commercant : commercants){
+            clientList.addAll(commercant.getClients());
+        }
+        return clientList;
+    }
 
 }

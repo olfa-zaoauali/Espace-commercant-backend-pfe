@@ -7,7 +7,7 @@ public class SAdmintoUser {
         user.setPassword(sAdmin.getPassword());
         user.setEnabled(sAdmin.getEnabled());
         user.setImage(sAdmin.getImage());
-        user.setTenant_id(sAdmin.getId());
+        user.setTenantId(sAdmin.getTenantId());
         user.setRole(Role.SADMIN);
         return (user);
     }

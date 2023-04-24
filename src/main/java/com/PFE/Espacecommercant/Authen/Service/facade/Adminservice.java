@@ -1,7 +1,9 @@
 package com.PFE.Espacecommercant.Authen.Service.facade;
 import com.PFE.Espacecommercant.Authen.DTO.RegisterAdminResponsedto;
 import com.PFE.Espacecommercant.Authen.DTO.RegisterRequest;
+import com.PFE.Espacecommercant.Authen.model.Modules;
 import com.PFE.Espacecommercant.Authen.users.Admin;
+import com.PFE.Espacecommercant.Authen.users.Client;
 import com.PFE.Espacecommercant.Authen.users.Commercant;
 
 
@@ -15,10 +17,13 @@ public interface Adminservice {
     RegisterAdminResponsedto update(RegisterRequest adminRequestDto, Integer id) ;
     Admin updateenabled(Integer id);
     Admin updatenotenabled(Integer id);
-    List<Commercant> SearchAllCommercant(Integer id);
+    List<Commercant> SearchAllCommercant(String tenantId);
+    List<Modules> SearchAllModules(String tenantId);
+    List<Client> getallclients(String tenantId);
 
 
 
 
 
-}
+
+    }

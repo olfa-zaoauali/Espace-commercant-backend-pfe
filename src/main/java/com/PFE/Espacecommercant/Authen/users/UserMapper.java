@@ -7,7 +7,7 @@ public class UserMapper {
         user.setPassword(admin.getPassword());
         user.setEnabled(admin.getEnabled());
         user.setImage(admin.getLogo());
-        user.setTenant_id(admin.getId());
+        user.setTenantId(admin.getTenantId());
         user.setRole(Role.ADMIN);
         return (user);
     }

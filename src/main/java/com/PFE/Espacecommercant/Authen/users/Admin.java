@@ -1,5 +1,6 @@
 package com.PFE.Espacecommercant.Authen.users;
 
+import com.PFE.Espacecommercant.Authen.model.Modules;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,6 +23,8 @@ public class Admin implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer id ;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String tenantId;
     private String firstname;
     private String lastname;
     private String email;
@@ -37,7 +39,13 @@ public class Admin implements UserDetails {
     @OneToMany(mappedBy ="admin",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Commercant>  commercants;
-
+    @ManyToMany
+    @JoinTable(name = "AdminModules",
+            joinColumns = @JoinColumn(name = "admin_id"),
+            inverseJoinColumns = @JoinColumn(name = "module_id"))
+    private List<Modules> modules;
+    //private String commercantsId;
+    //private String SadminId;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

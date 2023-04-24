@@ -43,7 +43,7 @@ public class JwtService {
     public String generateTokenuser(
             UserDetails userDetails,
             String userImage,
-            Integer userid ,
+            String userid ,
             Role userRole){
 
         Map<String, Object> extraClaims = new HashMap<>();

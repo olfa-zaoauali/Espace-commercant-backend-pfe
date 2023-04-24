@@ -28,7 +28,7 @@ public class User implements UserDetails {
     private String image;
     @Enumerated(EnumType.STRING)
     private Role role ;
-    private Integer tenant_id;
+    private String tenantId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

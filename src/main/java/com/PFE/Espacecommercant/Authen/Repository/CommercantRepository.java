@@ -13,4 +13,6 @@ public interface CommercantRepository extends JpaRepository<Commercant, Integer>
     Optional<Commercant> findById(Integer id);
 
     Optional<Commercant> findByemail(String email);
+    Optional<Commercant> findByTenantId(String tenantId);
+
 }
