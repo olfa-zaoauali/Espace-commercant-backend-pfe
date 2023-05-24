@@ -33,7 +33,11 @@ public class SAdmin implements UserDetails {
     private String lastname;
     private String email;
     private String password;
-    private String image ;
+    private String telephone;
+    private String adresse;
+    private String ville;
+    private String pays;
+    private String image;
     private Boolean enabled=true;
     @OneToMany(mappedBy ="sadmin",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference

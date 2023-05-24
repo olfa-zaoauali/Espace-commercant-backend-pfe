@@ -15,10 +15,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SAdminResponsedto {
+    private Integer id;
     private String firstname;
     private String lastname;
     private String email;
     private String password;
+    private String telephone;
+    private String adresse;
+    private String ville;
+    private String pays;
     private String image ;
     private String tenantId;
     private Boolean enabled=true;
@@ -32,8 +37,13 @@ public class SAdminResponsedto {
         sAdminResponsedto.setLastname(sAdmin.getLastname());
         sAdminResponsedto.setEmail(sAdmin.getEmail());
         sAdminResponsedto.setPassword(sAdmin.getPassword());
+        sAdminResponsedto.setAdresse(sAdmin.getAdresse());
+        sAdminResponsedto.setVille(sAdmin.getVille());
+        sAdminResponsedto.setPays(sAdmin.getPays());
         sAdminResponsedto.setImage(sAdmin.getImage());
         sAdminResponsedto.setTenantId(sAdmin.getTenantId());
+        sAdminResponsedto.setId(sAdmin.getId());
+        sAdminResponsedto.setTelephone(sAdmin.getTelephone());
         List<Client> clientList= new ArrayList<>();
         List<Commercant> commercantList= sAdmin.getCommercants();
         for (Commercant commercant:commercantList){

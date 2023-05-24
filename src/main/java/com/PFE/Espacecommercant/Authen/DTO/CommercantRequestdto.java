@@ -14,7 +14,10 @@ public class CommercantRequestdto {
     private String telephone;
     private String adresse;
     private String ville;
+    private String pays;
     private String image;
     private Double pay;
     private String admin;
+    private double pourcentage;
+
 }

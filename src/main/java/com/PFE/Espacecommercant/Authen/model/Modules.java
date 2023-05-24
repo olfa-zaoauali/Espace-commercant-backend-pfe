@@ -7,7 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Random;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,8 +18,14 @@ public class Modules {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)   private Integer id;
    private  String nom;
-   private String prix;
+   private double prix;
+   private String reference;
 
+   public static String generateRandomReference() {
+      Random random = new Random();
+      int randomNumber = random.nextInt(1000000);
+      return "REF-" + randomNumber;
+   }
 
 
 

@@ -1,5 +1,6 @@
 package com.PFE.Espacecommercant.Authen.Repository;
 
+import com.PFE.Espacecommercant.Authen.DTO.RegisterAdminResponsedto;
 import com.PFE.Espacecommercant.Authen.users.Admin;
 import com.PFE.Espacecommercant.Authen.users.SAdmin;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,7 @@ public interface AdminRepository extends JpaRepository<Admin,Integer> {
     List<Admin> findAll();
     @Override
     Optional<Admin> findById(Integer integer);
+    Admin findByCompany(String company);
 
     Optional<Admin> findByemail(String email);
     Optional<Admin> findByTenantId(String tenantId);

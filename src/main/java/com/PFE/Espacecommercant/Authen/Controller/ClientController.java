@@ -3,6 +3,7 @@ package com.PFE.Espacecommercant.Authen.Controller;
 import com.PFE.Espacecommercant.Authen.DTO.*;
 import com.PFE.Espacecommercant.Authen.Service.facade.ClientService;
 import com.PFE.Espacecommercant.Authen.users.Client;
+import com.PFE.Espacecommercant.Authen.users.Commercant;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
@@ -101,8 +102,8 @@ public class ClientController {
         return "User activated successfully";
     }
     @GetMapping("/{email}")
-    public ResponseEntity<Client> findByEmail(@PathVariable String email) {
-        Client Response=clientService.findByemail(email);
+    public ResponseEntity<ClientResponseDto> findByEmail(@PathVariable String email) {
+        ClientResponseDto Response=clientService.findByemail(email);
         return ResponseEntity.ok(Response);
     }
     @GetMapping("id/{id}")
@@ -110,11 +111,26 @@ public class ClientController {
         Optional<Client> Response=clientService.findByid(id);
         return ResponseEntity.ok(Response);
     }
+    @GetMapping("/tenantId/{tenantId}")
+    public ClientResponseDto getByTeantId(@PathVariable String tenantId){
+        return clientService.findByTeantId(tenantId);
+    }
+    @PutMapping("updatecompte/{tenantId}")
+    public  ResponseEntity<Client> updateCompte(@RequestBody ClientReqDto clientReqDto,@PathVariable String tenantId){
+        Client response=clientService.updateCompte(clientReqDto,tenantId);
+        return ResponseEntity.accepted().body(response);
+    }
+    @PutMapping("password/{tenantId}")
+    public ChangePasswordRequest changerPassword(@RequestBody ChangePasswordRequest changePasswordRequest,@PathVariable String tenantId){
+        ChangePasswordRequest Response= clientService.changerPassword(tenantId,changePasswordRequest);
+        return Response;
+    }
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id){
         clientService.delete(id);
         return  ResponseEntity.noContent().build();
     }
+
 
     @PutMapping("/enabled/{id}")
     public ResponseEntity<Client> updateenable(@PathVariable Integer id){
@@ -171,5 +187,36 @@ public class ClientController {
         client.setLogo(filenameimage);
         ClientResponseDto clientResponseDto=clientService.updateCommercant(client, id);
         return ResponseEntity.accepted().body(clientResponseDto);
+    }
+    @PutMapping("Admin/{id}")
+    public ResponseEntity<RegisterAdminResponsedto> registerAdmin(@RequestPart String request,@RequestPart("file") MultipartFile batinda,@RequestPart("logo") MultipartFile logo,@PathVariable Integer id) throws MessagingException,IOException {
+        boolean isExit = new File(context.getRealPath("/images/")).exists();
+        if (!isExit)
+        {
+            new File (context.getRealPath("/images/")).mkdir();
+            System.out.println("mk dir.............");
+        }
+        String filenamebatinda = batinda.getOriginalFilename();
+        String filenamelogo = logo.getOriginalFilename();
+        String newFileName1 = FilenameUtils.getBaseName(filenamebatinda)+"."+FilenameUtils.getExtension(filenamebatinda);
+        String newFileName2 = FilenameUtils.getBaseName(filenamelogo)+"."+FilenameUtils.getExtension(filenamelogo);
+        File serverFile1 = new File (context.getRealPath("/images/"+File.separator+newFileName1));
+        File serverFile2 = new File (context.getRealPath("/images/"+File.separator+newFileName2));
+
+        try
+        {
+            System.out.println("image");
+            FileUtils.writeByteArrayToFile(serverFile1,batinda.getBytes());
+            FileUtils.writeByteArrayToFile(serverFile2,logo.getBytes());
+
+
+
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        RegisterRequest admin = objectMapper.readValue(request, RegisterRequest.class);
+        admin.setBatinda(filenamebatinda);
+        admin.setLogo(filenamelogo);
+        return ResponseEntity.ok(clientService.ClientToAdmin(admin,id));
     }
 }

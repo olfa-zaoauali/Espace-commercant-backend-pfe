@@ -28,7 +28,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final CommercantRepository commercantRepository;
     private final ClientRepository clientRepository;
-
+    private final AdminRepository adminRepository;
     private final SAdminRepository sAdminRepository;
     private final ModuleRepository moduleRepository;
     public AuthenticationResponse registerSAdmin(SAdminRequestdto request) throws MessagingException {
@@ -36,12 +36,14 @@ public class AuthenticationService {
                 .tenantId(UUID.randomUUID().toString())
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
+                .adresse(request.getAdresse())
+                .ville(request.getVille())
+                .pays(request.getPays())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .image(request.getImage())
                 .enabled(true)
                 .build();
-
         sAdminRepository.save(sadmin);
         User user  = SAdmintoUser.toUser(sadmin);
         repository.save(user);
@@ -60,7 +62,13 @@ public class AuthenticationService {
                 .domain(request.getDomain())
                 .company(request.getCompany())
                 .telephone(request.getTelephone())
+                .nbEmployer(request.getNbEmployer())
                 .matricule(request.getMatricule())
+                .dateExpiration(LocalDate.now().plusMonths(1))
+                .dateCreation(LocalDate.now())
+                .adresse(request.getAdresse())
+                .ville(request.getVille())
+                .pays(request.getPays())
                 .batinda(request.getBatinda())
                 .logo(request.getLogo())
                 .enabled(false)
@@ -88,12 +96,14 @@ public class AuthenticationService {
                 .image(request.getImage())
                 .adresse(request.getAdresse())
                 .ville(request.getVille())
-                .pay(request.getPay())
+                .pays(request.getPays())
+                .pourcentage(request.getPourcentage())
+                .dateCreation(LocalDate.now())
+                .pay(0.0)
                 .enabled(false)
                 .build();
         Optional<Admin> admin= repoadmin.findByTenantId(request.getAdmin());
         commercant.setAdmin(admin.get());
-
         commercantRepository.save(commercant);
         User user  = CommercanttoUser.toUser(commercant);
         user.setPassword(passwordEncoder.encode(commercant.getPassword()));
@@ -114,7 +124,10 @@ public class AuthenticationService {
                 .image(request.getImage())
                 .adresse(request.getAdresse())
                 .ville(request.getVille())
-                .pay(request.getPay())
+                .pays(request.getPays())
+                .pourcentage(request.getPourcentage())
+                .dateCreation(LocalDate.now())
+                .pay(0.0)
                 .enabled(false)
                 .build();
 
@@ -147,6 +160,13 @@ public class AuthenticationService {
             user.setEnabled(false);
          }
          }
+        if (role==Role.ADMIN){
+            Admin admin = adminRepository.findByemail(request.getEmail()).orElse(null);
+            if(LocalDate.now().isAfter(admin.getDateExpiration())){
+                admin.setEnabled(false);
+                user.setEnabled(false);
+            }
+        }
          if (user.getEnabled()==true){
          var jwtToken=jwtService.generateTokenuser(user,  user.getImage(), user.getTenantId(), role);
          return AuthenticationResponse.builder()
@@ -159,7 +179,6 @@ public class AuthenticationService {
          }
         return null;
     }
-
     public User findByemail(String email) {
         User UserEntity= repository.findByEmail(email);
         return UserEntity;

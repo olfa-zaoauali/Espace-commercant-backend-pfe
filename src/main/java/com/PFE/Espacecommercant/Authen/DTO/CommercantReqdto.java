@@ -15,7 +15,9 @@ public class CommercantReqdto {
     private String telephone;
     private String adresse;
     private String ville;
+    private String pays;
     private String image;
+    private double pourcentage;
     private Double pay;
     private String sadminId;
 

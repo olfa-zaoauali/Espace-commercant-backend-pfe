@@ -28,6 +28,7 @@ public class ModulesServiceImpl implements ModulesService {
         var module= Modules.builder()
                 .nom(modules.getNom())
                 .prix(modules.getPrix())
+                .reference(Modules.generateRandomReference())
                 .build();
         Modules saved =moduleRepository.save(module);
         return saved;
@@ -52,4 +53,5 @@ public class ModulesServiceImpl implements ModulesService {
         saved.setPrix(modules.getPrix());
         return  moduleRepository.save(saved);
     }
+
 }

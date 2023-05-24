@@ -1,10 +1,10 @@
 package com.PFE.Espacecommercant.Authen.Controller;
 
-import com.PFE.Espacecommercant.Authen.DTO.AuthenticationResponse;
-import com.PFE.Espacecommercant.Authen.DTO.CommercantReqdto;
-import com.PFE.Espacecommercant.Authen.DTO.CommercantRequestdto;
-import com.PFE.Espacecommercant.Authen.DTO.CommercantResponsedto;
+import com.PFE.Espacecommercant.Authen.DTO.*;
 import com.PFE.Espacecommercant.Authen.Service.facade.CommercantService;
+import com.PFE.Espacecommercant.Authen.model.Cashout;
+import com.PFE.Espacecommercant.Authen.model.Facture;
+import com.PFE.Espacecommercant.Authen.users.Admin;
 import com.PFE.Espacecommercant.Authen.users.Client;
 import com.PFE.Espacecommercant.Authen.users.Commercant;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -48,16 +48,25 @@ public class CommercantController {
     public List<Client> getallclients(@PathVariable String tenantId){
         return commercantService.SearchAllclient(tenantId);
     }
+    @GetMapping("/cashouts/{tenantId}")
+    public List<Cashout> getallcashouts(@PathVariable String tenantId){
+        return commercantService.SearchAllCashouts(tenantId);
+    }
     @GetMapping("/{email}")
     public ResponseEntity<Optional<Commercant>> findByEmail(@PathVariable String email) {
         Optional<Commercant> Response=commercantService.findByemail(email);
         return ResponseEntity.ok(Response);
     }
-    @GetMapping("id/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<Optional<Commercant>> findByid(@PathVariable Integer id) {
         Optional<Commercant> Response=commercantService.findByid(id);
         return ResponseEntity.ok(Response);
     }
+    @GetMapping("/tenantId/{tenantId}")
+    public Commercant getByTeantId(@PathVariable String tenantId){
+        return commercantService.findByTeantId(tenantId);
+    }
+
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id){
         commercantService.delete(id);
@@ -73,6 +82,38 @@ public class CommercantController {
     public ResponseEntity<Commercant> updatenotenable(@PathVariable Integer id){
         Commercant commercantnotenabled=commercantService.updatenotenabled(id);
         return ResponseEntity.accepted().body(commercantnotenabled);
+    }
+    @PatchMapping("updatecompte/{tenantId}")
+    public  ResponseEntity<CommercantResponsedto> updateCompte(@RequestBody UpdateCommeracantdto commercantRequestdto,@PathVariable String tenantId){
+        CommercantResponsedto commercantResponsedto=commercantService.updateCompte(commercantRequestdto, tenantId);
+        return ResponseEntity.accepted().body(commercantResponsedto);
+    }
+    @PutMapping("password/{tenantId}")
+    public ChangePasswordRequest changerPassword(@RequestBody ChangePasswordRequest changePasswordRequest,@PathVariable String tenantId){
+        ChangePasswordRequest Response= commercantService.changerPassword(tenantId,changePasswordRequest);
+        return Response;
+    }
+    //non consomée
+    @PutMapping("image/{tenantId}")
+    public Commercant changerImage(@RequestPart("image") MultipartFile image,@PathVariable String tenantId){
+        boolean isExit = new File(context.getRealPath("/images/")).exists();
+        if (!isExit)
+        {
+            new File (context.getRealPath("/images/")).mkdir();
+            System.out.println("mk dir.............");
+        }
+        String filenameimage = image.getOriginalFilename();
+        String newFileName = FilenameUtils.getBaseName(filenameimage)+"."+FilenameUtils.getExtension(filenameimage);
+        File serverFile = new File (context.getRealPath("/images/"+File.separator+newFileName));
+        try
+        {
+            System.out.println("image");
+            FileUtils.writeByteArrayToFile(serverFile,image.getBytes());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        Commercant Response= commercantService.changerImage(tenantId,filenameimage);
+        return Response;
     }
     @PutMapping("update/{id}")
     public  ResponseEntity<CommercantResponsedto> update(@RequestBody CommercantRequestdto commercantRequestdto,@PathVariable Integer id){
@@ -125,5 +166,34 @@ public class CommercantController {
         CommercantResponsedto commercantResponsedto=commercantService.updatecommercant(commercant, id);
         return ResponseEntity.accepted().body(commercantResponsedto);
     }
+    @GetMapping("/commission/{tenantId}")
+    public double calculCommission(@PathVariable String tenantId) {
+        return commercantService.calculCommission(tenantId);
+    }
+    @GetMapping("/revenu/{tenantId}")
+    public double calculRevenu(@PathVariable String tenantId) {
+        return commercantService.calculRevenu(tenantId);
+    }
+    @GetMapping("/nbadmin/{tenantId}")
+    public int calculNbAdmins(@PathVariable String tenantId) {
+        return commercantService.calculNbAdmins(tenantId);
+    }
+    @GetMapping("/nbclients/{tenantId}")
+    public int calculNbClients(@PathVariable String tenantId) {
+        return commercantService.calculNbClients(tenantId);
+    }
+    @GetMapping("/facturesClients/{tenantId}")
+    public List<FactureResponseDto> consulterFacturesClients(@PathVariable String tenantId){
+        return commercantService.ConsulterFactures(tenantId);
+    }
+    @GetMapping("/admins/{tenantId}")
+    public List<Admin> getAdminsOfClinet(@PathVariable String tenantId){
+        return commercantService.getAdminsOfCommercant(tenantId);
+    }
+    @GetMapping("/infosadmins/{tenantId}")
+    public RegisterAdminResponsedto getAdmins(@PathVariable String tenantId){
+        return commercantService.getInfoAdmin(tenantId);
+    }
+
 
 }

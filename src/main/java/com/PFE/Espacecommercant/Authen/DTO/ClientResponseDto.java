@@ -25,10 +25,15 @@ public class ClientResponseDto {
     private Boolean enabled;
     private String logo;
     private Integer nbEmployer;
+    private String adresse;
+    private String ville;
+    private String pays;
     private LocalDate dateExpiration;
     private LocalDate dateCreation;
     private String emailCommercant;
-    private String commercantId;
+    private String tenantId;
+    private boolean verified;
+
     @JsonIgnore
     private SAdmin sAdmin;
     @JsonIgnore
@@ -48,6 +53,11 @@ public class ClientResponseDto {
         clientResponseDto.setDateExpiration(client.getDateExpiration());
         clientResponseDto.setDateCreation(client.getDateCreation());
         clientResponseDto.setEmailCommercant(client.getEmailCommercant());
+        clientResponseDto.setTenantId(client.getTenantId());
+        clientResponseDto.setAdresse(client.getAdresse());
+        clientResponseDto.setVille(client.getVille());
+        clientResponseDto.setPays(client.getPays());
+        clientResponseDto.setVerified(client.isVerified());
         return clientResponseDto;
 
     }

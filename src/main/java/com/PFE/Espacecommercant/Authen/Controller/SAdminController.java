@@ -1,6 +1,7 @@
 package com.PFE.Espacecommercant.Authen.Controller;
 
 
+import com.PFE.Espacecommercant.Authen.DTO.ChangePasswordRequest;
 import com.PFE.Espacecommercant.Authen.DTO.ClientResponseDto;
 import com.PFE.Espacecommercant.Authen.DTO.SAdminRequestdto;
 import com.PFE.Espacecommercant.Authen.DTO.SAdminResponsedto;
@@ -56,11 +57,20 @@ public class SAdminController {
        sAdminservice.delete(id);
         return  ResponseEntity.noContent().build();
     }
+    @GetMapping("tenantId/{tenantId}")
+    public SAdminResponsedto getByTenantId(@PathVariable String tenantId){
+        return sAdminservice.findByTeantId(tenantId);
+    }
 
     @PutMapping("/enabled/{id}")
     public ResponseEntity<SAdmin> updateenable(@PathVariable Integer id){
         SAdmin sAdminenabled=sAdminservice.updateenabled(id);
         return ResponseEntity.accepted().body(sAdminenabled);
+    }
+    @PutMapping("password/{tenantId}")
+    public ChangePasswordRequest changerPassword(@RequestBody ChangePasswordRequest changePasswordRequest, @PathVariable String tenantId){
+        ChangePasswordRequest Response= sAdminservice.changerPassword(tenantId,changePasswordRequest);
+        return Response;
     }
     @PutMapping("/notenabled/{id}")
     public ResponseEntity<SAdmin> updatenotenable(@PathVariable Integer id){
@@ -72,6 +82,18 @@ public class SAdminController {
         SAdminResponsedto sAdminResponsedto=sAdminservice.update(sAdminRequestdto, id);
         return ResponseEntity.accepted().body(sAdminResponsedto);
 
+    }
+    @GetMapping("/revenu/{tenantId}")
+    public double totalRevenu(@PathVariable String tenantId){
+        return sAdminservice.totalRevenu(tenantId);
+    }
+    @GetMapping("/nb/{tenantId}")
+    public int nbClients(@PathVariable String tenantId){
+        return sAdminservice.nbClients(tenantId);
+    }
+    @GetMapping("/Revenunet/{tenantId}")
+    public double RevenuNet(@PathVariable String tenantId){
+        return sAdminservice.revenuNet(tenantId);
     }
 
 }

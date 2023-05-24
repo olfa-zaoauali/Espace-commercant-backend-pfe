@@ -1,5 +1,6 @@
 package com.PFE.Espacecommercant.Authen.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class RegisterRequest {
     private String firstname;
     private String lastname;
@@ -21,11 +24,16 @@ public class RegisterRequest {
     private String domain;
     private String matricule;
     private String batinda;
+    private Integer nbEmployer;
     private boolean enabled=false;
     private String logo;
+    private String adresse;
+    private String ville;
+    private String pays;
     private List<Integer> moduleId;
 
     public Boolean getEnabled() {
         return enabled;
     }
+
 }

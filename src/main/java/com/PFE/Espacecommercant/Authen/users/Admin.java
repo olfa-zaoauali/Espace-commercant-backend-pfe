@@ -1,7 +1,10 @@
 package com.PFE.Espacecommercant.Authen.users;
 
+import com.PFE.Espacecommercant.Authen.model.Facture;
 import com.PFE.Espacecommercant.Authen.model.Modules;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,7 +39,21 @@ public class Admin implements UserDetails {
     private String matricule;
     private String batinda;
     private Boolean enabled;
+    private Integer nbEmployer;
+    private String adresse;
+    private String ville;
+    private String pays;
+    private double apayer;
     private String logo;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDate dateExpiration;
+    // @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    // @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate dateCreation = LocalDate.now();
+    @OneToMany(mappedBy ="partenaire",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Facture> factures;
     @OneToMany(mappedBy ="admin",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Commercant>  commercants;
@@ -46,6 +64,14 @@ public class Admin implements UserDetails {
     private List<Modules> modules;
     //private String commercantsId;
     //private String SadminId;
+    public double totalprix(){
+        double totale= 0;
+        for (Modules module: modules){
+            double prix= module.getPrix();
+            totale=totale+prix;
+        }
+        return totale;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
