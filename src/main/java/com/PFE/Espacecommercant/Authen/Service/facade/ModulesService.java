@@ -9,5 +9,6 @@ public interface ModulesService {
     public List<Modules> getAll();
     public void delete(Integer id);
     public Modules update(Modules modules, Integer id);
+    List<Modules> getModulesOdAdmin(String tenantId);
 
     }

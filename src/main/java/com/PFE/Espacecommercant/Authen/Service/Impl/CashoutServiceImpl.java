@@ -53,6 +53,7 @@ public class CashoutServiceImpl implements CashoutService {
                 .temp(LocalTime.now())
                 .dateDeCreation(LocalDate.now())
                 .Montant(100)
+                .verified(false)
                 .build();
         if (cashout.getCashout()>cashout.getMontant()){
             cashoutRepository.save(cashout);
@@ -75,7 +76,7 @@ public class CashoutServiceImpl implements CashoutService {
             historique.setDate(LocalDate.now());
             historique.setTemp(LocalTime.now());
             historique.setMessage("Le/La Commerçant(e) "+commercant.getLastname()+" "+commercant.getFirstname()+
-                    "a éffectué(e) un cashout de "+cashout.getCashout()+" DT le " + historique.getDate()+" à "+historique.getTemp());
+                    " a demandé(e) un cashout de "+cashout.getCashout()+" DT le " + historique.getDate()+" à "+historique.getTemp());
             historiqueRepository.save(historique);
             cashout.setFacture(facture);
             commercant.setPay(0.0);

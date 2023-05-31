@@ -326,6 +326,7 @@ public class CommercantServiceImpl implements CommercantService {
                 .orElseThrow(() -> new NotFoundException("Commercant id not found "));
         int nombre = 0;
         for (Client client : commercant.getClients()) {
+            if(!client.isVerified())
             nombre=nombre+1;
         }
         return nombre;

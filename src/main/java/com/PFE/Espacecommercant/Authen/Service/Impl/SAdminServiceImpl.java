@@ -3,11 +3,13 @@ package com.PFE.Espacecommercant.Authen.Service.Impl;
 import com.PFE.Espacecommercant.Authen.DTO.*;
 import com.PFE.Espacecommercant.Authen.Exceptions.NotFoundException;
 import com.PFE.Espacecommercant.Authen.Repository.AdminRepository;
+import com.PFE.Espacecommercant.Authen.Repository.CashoutRepository;
 import com.PFE.Espacecommercant.Authen.Repository.SAdminRepository;
 import com.PFE.Espacecommercant.Authen.Repository.UserRepository;
 import com.PFE.Espacecommercant.Authen.Service.facade.Adminservice;
 import com.PFE.Espacecommercant.Authen.Service.facade.CommercantService;
 import com.PFE.Espacecommercant.Authen.Service.facade.SAdminservice;
+import com.PFE.Espacecommercant.Authen.model.Cashout;
 import com.PFE.Espacecommercant.Authen.users.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -34,8 +36,7 @@ public class SAdminServiceImpl implements SAdminservice {
     @Autowired private final ModelMapper modelMapper ;
     @Autowired private final AdminRepository adminRepository;
     @Autowired private final CommercantService commercantService;
-
-
+    @Autowired private final CashoutRepository cashoutRepository;
 
     @Override
     public List<SAdmin> findAll() {
@@ -196,6 +197,24 @@ public class SAdminServiceImpl implements SAdminservice {
         }
         nbClients= nbClients+ clients.size();
         return nbClients;
+    }
+    @Override
+    public Cashout validerCashout(int id){
+        Cashout cashout= cashoutRepository.findById(id).orElse(null);
+        cashout.setVerified(true);
+        cashoutRepository.save(cashout);
+        return cashout;
+    }
+    @Override
+    public List<CashoutResponseDto> getAllCashouts(String tenantId){
+        SAdmin sAdmin= sAdminRepository.findByTenantId(tenantId).orElse(null);
+        List<CashoutResponseDto> cashouts=new ArrayList<>();
+        for (Commercant commercant :sAdmin.getCommercants() ){
+            for (Cashout cashout:commercant.getCashouts() ){
+                cashouts.add(CashoutResponseDto.mapperfromEntityToDto(cashout));
+            }
+        }
+        return cashouts;
     }
     @Override
     public double revenuNet(String tenantId){

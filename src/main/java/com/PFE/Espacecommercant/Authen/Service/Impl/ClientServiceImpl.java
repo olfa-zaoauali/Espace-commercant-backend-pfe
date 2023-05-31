@@ -350,7 +350,7 @@ public class ClientServiceImpl implements ClientService {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User id not found "+ id));
         Admin admin= ClientReqDto.ClientToAdmin(client);
-        admin.setPassword(passwordEncoder.encode(request.getPassword()));
+        admin.setPassword(PasswordGenerate.generatepassword());
         admin.setDateExpiration(LocalDate.now().plusMonths(1));
         admin.setMatricule(request.getMatricule());
         admin.setBatinda(request.getBatinda());
@@ -368,15 +368,6 @@ public class ClientServiceImpl implements ClientService {
         commercantRepository.save(commercant);
         }
         Admin updated=adminRepository.save(admin);
-        String email=client.getEmail();
-        User user= userRepository.findByEmail(email);
-        user.setEmail(admin.getEmail());
-        user.setImage(admin.getLogo());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEnabled(admin.getEnabled());
-        user.setTenantId(admin.getTenantId());
-        user.setRole(Role.ADMIN);
-        userRepository.save(user);
         return modelMapper.map(updated,RegisterAdminResponsedto.class);
     }
 }

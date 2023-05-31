@@ -1,11 +1,9 @@
 package com.PFE.Espacecommercant.Authen.Controller;
 
 
-import com.PFE.Espacecommercant.Authen.DTO.ChangePasswordRequest;
-import com.PFE.Espacecommercant.Authen.DTO.ClientResponseDto;
-import com.PFE.Espacecommercant.Authen.DTO.SAdminRequestdto;
-import com.PFE.Espacecommercant.Authen.DTO.SAdminResponsedto;
+import com.PFE.Espacecommercant.Authen.DTO.*;
 import com.PFE.Espacecommercant.Authen.Service.facade.SAdminservice;
+import com.PFE.Espacecommercant.Authen.model.Cashout;
 import com.PFE.Espacecommercant.Authen.users.Client;
 import com.PFE.Espacecommercant.Authen.users.Commercant;
 import com.PFE.Espacecommercant.Authen.users.SAdmin;
@@ -96,4 +94,12 @@ public class SAdminController {
         return sAdminservice.revenuNet(tenantId);
     }
 
+    @GetMapping("/cashouts/{tenantId}")
+    public List<CashoutResponseDto> getAllCashouts(@PathVariable String tenantId){
+        return sAdminservice.getAllCashouts(tenantId);
+    }
+    @PutMapping("/validCashout/{Id}")
+    public Cashout validerCashout(@PathVariable int Id){
+        return sAdminservice.validerCashout(Id);
+    }
 }

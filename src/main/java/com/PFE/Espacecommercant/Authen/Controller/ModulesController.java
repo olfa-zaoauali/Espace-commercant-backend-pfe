@@ -36,5 +36,9 @@ public class ModulesController {
         return ResponseEntity.accepted().body(module);
 
     }
+    @GetMapping("Admin/{tenantId}")
+    public List<Modules> getallModulesOfAdmin(@PathVariable String tenantId){
+        return modulesService.getModulesOdAdmin(tenantId);
+    }
 
 }

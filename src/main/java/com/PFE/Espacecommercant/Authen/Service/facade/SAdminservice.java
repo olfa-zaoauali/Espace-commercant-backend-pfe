@@ -1,6 +1,7 @@
 package com.PFE.Espacecommercant.Authen.Service.facade;
 
 import com.PFE.Espacecommercant.Authen.DTO.*;
+import com.PFE.Espacecommercant.Authen.model.Cashout;
 import com.PFE.Espacecommercant.Authen.users.Client;
 import com.PFE.Espacecommercant.Authen.users.Commercant;
 import com.PFE.Espacecommercant.Authen.users.SAdmin;
@@ -25,5 +26,7 @@ public interface SAdminservice {
     double totalRevenu(String tenantId);
     int nbClients(String tenantId);
     public double revenuNet(String tenantId);
+    Cashout validerCashout(int id);
+    List<CashoutResponseDto> getAllCashouts(String tenantId);
 
     }

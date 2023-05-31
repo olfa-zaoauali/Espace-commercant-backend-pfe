@@ -48,23 +48,33 @@ public class Adminserviceimpl implements Adminservice {
     public void activateAdmin(Integer id)
     {
         Mail mail = new Mail();
-        Admin user = adminRepository.findById(id)
+        Admin admin = adminRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User id not found "+ id));
-        Client client=clientRepository.findByemail(user.getEmail());
-        user.setEnabled(true);
-        String email=user.getEmail();
-        User admin= userRepository.findByEmail(email);
+        Client client=clientRepository.findByemail(admin.getEmail());
         admin.setEnabled(true);
-
-        userRepository.save(admin);
-        adminRepository.save(user);
+        adminRepository.save(admin);
+        String email=admin.getEmail();
+        User user= userRepository.findByEmail(email);
+        user.setEnabled(true);
+        user.setEmail(admin.getEmail());
+        user.setImage(admin.getLogo());
+        user.setPassword(passwordEncoder.encode(admin.getPassword()));
+        user.setEnabled(admin.getEnabled());
+        user.setTenantId(admin.getTenantId());
+        user.setRole(Role.ADMIN);
+        userRepository.save(user);
         mail.setMailFrom("zaoualiolfa2000@gmail.com");
         mail.setMailTo(user.getEmail());
         mail.setMailSubject("Confirmation d'inscription à notre plateforme");
-        mail.setMailContent("Cher(e) " + user.getFirstname() + " " + user.getLastname() + ",\n\n" +
+        mail.setMailContent("Cher(e) " + admin.getFirstname() + " " + admin.getLastname() + ",\n\n" +
                 "Félicitations ! Nous sommes ravis de vous informer que votre compte a été validé avec succès et que vous êtes maintenant officiellement un administrateur dans notre module. " +
                 "Nous vous remercions sincèrement d'avoir choisi d'acheter nos modules et de rejoindre notre communauté.\n\n"+
                 "Votre compte a été mis à niveau avec succès pour accéder à toutes les fonctionnalités avancées de notre module." +
+                "Voici les informations de connexion à votre compte :\n\n" +
+                "Nom d'utilisateur :"+admin.getEmail() +"\n\n"+
+                "Mot de passe temporaire :  " + admin.getPassword() +
+                "\n\n Nous vous conseillons de changer votre mot de passe temporaire dès que possible pour des raisons de sécurité." +
+                " Pour ce faire, veuillez vous connecter à votre compte et modifier votre mot de passe dans les paramètres de compte.\n\n"+
                 " Vous avez désormais le pouvoir de gérer et de personnaliser votre expérience selon vos besoins.\n\n"+
                 " Nous vous rappelons que notre équipe est là pour vous soutenir à chaque étape du processus. Si vous avez des questions," +
                 " des préoccupations ou si vous avez besoin d'une assistance supplémentaire," +
@@ -76,7 +86,10 @@ public class Adminserviceimpl implements Adminservice {
                 "Cordialement,\n\n"+"L'équipe de WIND-ERP"
         );
         mailService.sendEmail(mail);
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        adminRepository.save(admin);
         client.setVerified(true);
+        client.setEnabled(false);
         clientRepository.save(client);
 
     }

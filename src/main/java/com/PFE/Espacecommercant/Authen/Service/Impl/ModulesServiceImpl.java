@@ -3,10 +3,12 @@ package com.PFE.Espacecommercant.Authen.Service.Impl;
 import com.PFE.Espacecommercant.Authen.DTO.SAdminRequestdto;
 import com.PFE.Espacecommercant.Authen.DTO.SAdminResponsedto;
 import com.PFE.Espacecommercant.Authen.Exceptions.NotFoundException;
+import com.PFE.Espacecommercant.Authen.Repository.AdminRepository;
 import com.PFE.Espacecommercant.Authen.Repository.ModuleRepository;
 import com.PFE.Espacecommercant.Authen.Service.facade.ModulesService;
 import com.PFE.Espacecommercant.Authen.model.Modules;
 
+import com.PFE.Espacecommercant.Authen.users.Admin;
 import com.PFE.Espacecommercant.Authen.users.SAdmin;
 import com.PFE.Espacecommercant.Authen.users.User;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ import java.util.List;
 public class ModulesServiceImpl implements ModulesService {
     @Autowired
     private final ModuleRepository moduleRepository;
+    @Autowired
+    private final AdminRepository adminRepository;
 
     @Override
     public Modules save( Modules modules) {
@@ -37,6 +41,11 @@ public class ModulesServiceImpl implements ModulesService {
     @Override
     public List<Modules> getAll() {
         return moduleRepository.findAll();
+    }
+    @Override
+    public List<Modules> getModulesOdAdmin(String tenantId){
+        Admin admin=adminRepository.findByTenantId(tenantId).orElse(null);
+        return admin.getModules();
     }
 
     @Override
